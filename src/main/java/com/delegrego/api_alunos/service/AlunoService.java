@@ -1,11 +1,11 @@
 package com.delegrego.api_alunos.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.delegrego.api_alunos.dto.AlunoRequest;
 import com.delegrego.api_alunos.dto.AlunoResponse;
 import com.delegrego.api_alunos.model.Aluno;
 
@@ -14,12 +14,10 @@ public class AlunoService {
 
 	private final List<Aluno> alunos;
 
+	private int id = 1;
+
 	public AlunoService() {
 		alunos = new ArrayList<Aluno>();
-
-		alunos.add(new Aluno(1, "Joãozinho", "joao@email.com", "senha", LocalDate.of(2000, 8, 20), 8.5));
-		alunos.add(new Aluno(2, "Ana", "ana@email.com", "senha", LocalDate.of(1998, 10, 25), 7));
-		alunos.add(new Aluno(3, "Maria", "maria@email.com", "senha", LocalDate.of(2004, 10, 2), 9));
 	}
 
 	public List<AlunoResponse> listarAlunos() {
@@ -42,6 +40,22 @@ public class AlunoService {
 			}
 		}
 		return null;
+	}
+
+	public AlunoResponse cadastrarAluno(AlunoRequest request) {
+		alunos.add(new Aluno(id, request.getNome(), request.getEmail(), request.getSenha(), request.getDataNascimento(),
+				request.getMedia()));
+
+		id++;
+
+		Aluno alunoCadastrado = alunos.get(alunos.size() - 1 /* alunos.getLast() */);
+		
+		return new AlunoResponse(alunoCadastrado.getId(),
+				alunoCadastrado.getNome(),
+				alunoCadastrado.getEmail(),
+				alunoCadastrado.getDataNascimento(),
+				alunoCadastrado.getMedia());
+
 	}
 
 }
