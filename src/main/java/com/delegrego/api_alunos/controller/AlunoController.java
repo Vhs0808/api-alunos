@@ -34,11 +34,7 @@ public class AlunoController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<AlunoResponse> obterAlunoPorId(@PathVariable(name = "id") int id) {
-		AlunoResponse aluno = service.obterAlunoPorId(id);
-
-		return aluno != null
-			? ResponseEntity.ok().body(aluno)
-			: ResponseEntity.notFound().build();
+		return ResponseEntity.ok(service.obterAlunoPorId(id));
 	}
 
 	@PostMapping

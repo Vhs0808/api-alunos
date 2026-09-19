@@ -45,7 +45,7 @@ public class AlunoService {
 						a.getMedia());
 			}
 		}
-		return null;
+		throw new RuntimeException("Aluno não encontrado");
 	}
 
 	public AlunoResponse cadastrarAluno(AlunoRequest request) {
