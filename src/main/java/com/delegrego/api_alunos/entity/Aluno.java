@@ -1,4 +1,4 @@
-package com.delegrego.api_alunos.dto;
+package com.delegrego.api_alunos.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,13 +9,14 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class AlunoResponse {
+@Getter
+public class Aluno {
 
 	private int id;
 	private String nome;
 	private String email;
+	private String senha;
 	private LocalDate dataNascimento;
 	private double media;
 

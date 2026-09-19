@@ -2,12 +2,10 @@ package com.delegrego.api_alunos.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.delegrego.api_alunos.entity.Aluno;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.delegrego.api_alunos.dto.AlunoRequest;
 import com.delegrego.api_alunos.dto.AlunoResponse;
@@ -26,18 +24,47 @@ public class AlunoController {
 	}
 
 	@GetMapping
-	public List<AlunoResponse> listarAlunos() {
-		return service.listarAlunos();
+	public ResponseEntity<List<AlunoResponse>> listarAlunos() {
+		List<AlunoResponse> alunosResponse =  service.listarAlunos();
+
+		return alunosResponse != null
+			 ? ResponseEntity.ok().body(service.listarAlunos())
+			 : ResponseEntity.notFound().build();
 	}
 
 	@GetMapping("/{id}")
-	public AlunoResponse obterAlunoPorId(@PathVariable int id) {
-		return service.obterAlunoPorId(id);
+	public ResponseEntity<AlunoResponse> obterAlunoPorId(@PathVariable(name = "id") int id) {
+		AlunoResponse aluno = service.obterAlunoPorId(id);
+
+		return aluno != null
+			? ResponseEntity.ok().body(aluno)
+			: ResponseEntity.notFound().build();
 	}
 
 	@PostMapping
-	public AlunoResponse cadastrarAluno(@Valid @RequestBody AlunoRequest request) {
-		return service.cadastrarAluno(request);
+	public ResponseEntity<AlunoResponse> cadastrarAluno(@Valid @RequestBody AlunoRequest request) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(service.cadastrarAluno(request));
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<AlunoResponse> atualizarAluno(
+			@PathVariable(name = "id") int id,
+			@RequestBody @Valid AlunoRequest request
+	){
+		AlunoResponse response = service.obterAlunoPorId(id);
+		return response != null
+				? ResponseEntity.ok().body(response)
+				: ResponseEntity.notFound().build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deletarAluno(@PathVariable(name = "id") int id){
+		boolean alunoDeletado = service.deletarAluno(id);
+
+		return alunoDeletado == true
+				? ResponseEntity.noContent().build()
+				: ResponseEntity.notFound().build();
 	}
 
 }
