@@ -3,7 +3,8 @@ package com.delegrego.api_alunos.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
+import com.delegrego.api_alunos.exception.AlunoNaoEncontradoException;
+import com.delegrego.api_alunos.exception.EmailDuplicadoException;
 import org.springframework.stereotype.Service;
 
 import com.delegrego.api_alunos.dto.AlunoRequest;
@@ -14,7 +15,6 @@ import com.delegrego.api_alunos.entity.Aluno;
 public class AlunoService {
 
 	private final List<Aluno> alunos;
-
 	private int id = 1;
 
 	public AlunoService() {
@@ -22,11 +22,10 @@ public class AlunoService {
 	}
 
 	public List<AlunoResponse> listarAlunos() {
-		List<Aluno> alunosModel = alunos;
 
 		List<AlunoResponse> alunosResponse = new ArrayList<>();
 
-		for (Aluno a : alunosModel) {
+		for (Aluno a : alunos) {
 			alunosResponse
 					.add(new AlunoResponse(a.getId(), a.getNome(), a.getEmail(), a.getDataNascimento(), a.getMedia()));
 		}
@@ -45,10 +44,17 @@ public class AlunoService {
 						a.getMedia());
 			}
 		}
-		throw new RuntimeException("Aluno não encontrado");
+		throw new AlunoNaoEncontradoException("Aluno não encontrado");
 	}
 
 	public AlunoResponse cadastrarAluno(AlunoRequest request) {
+
+		for (Aluno aluno : alunos){
+			if(aluno.getEmail().equalsIgnoreCase(request.getEmail())){
+				throw new EmailDuplicadoException("Email já cadastrado");
+			}
+		}
+
 		alunos.add(new Aluno(id, request.getNome(), request.getEmail(), request.getSenha(), request.getDataNascimento(),
 				request.getMedia()));
 
@@ -66,6 +72,13 @@ public class AlunoService {
 	}
 
 	public AlunoResponse atualizarAluno(int id, AlunoRequest request) {
+
+		for (Aluno aluno : alunos){
+			if(aluno.getEmail().equalsIgnoreCase(request.getEmail()) && id != aluno.getId()){
+				throw new EmailDuplicadoException("Email já cadastrado");
+			}
+		}
+
 		for(Aluno aluno : alunos){
 			if(aluno.getId() == id){
 				aluno.setId(id);
@@ -85,16 +98,17 @@ public class AlunoService {
 			}
 		}
 
-		return null;
+		throw new AlunoNaoEncontradoException("Aluno inexistente");
 	}
 
-	public boolean deletarAluno(int id) {
+	public void deletarAluno(int id) {
 		for(Aluno aluno : alunos){
 			if(aluno.getId() == id){
 				alunos.remove(aluno);
-				return true;
+				return;
 			}
 		}
-		return false;
+		throw new RuntimeException("Aluno inexistente");
 	}
+
 }
