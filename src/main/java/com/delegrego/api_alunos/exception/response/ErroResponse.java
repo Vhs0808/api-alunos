@@ -1,4 +1,4 @@
-package com.delegrego.api_alunos.exception;
+package com.delegrego.api_alunos.exception.response;
 
 import java.time.Instant;
 
@@ -8,4 +8,4 @@ public record ErroResponse(
         String mensagem,
         Instant timestamp
 
-) { }
+) {}
